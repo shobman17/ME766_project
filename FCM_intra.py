@@ -390,7 +390,7 @@ T = 350  # Total simulation time (ms)
 dt = 0.01  # Time step (ms)
 time = np.arange(0, T+dt, dt)
 curr_amp = 20  # Input current amplitude (uA)
-pulse_end = 350  # Duration of current pulse (ms)
+pulse_end = 200  # Duration of current pulse (ms)
 
 # Initialize arrays to store results
 Vm = np.zeros([fcm.num_rows-1, len(time)])
@@ -415,10 +415,20 @@ currents = {
     'I_leak': [], 'I_Ca_L': [], 'I_HCN': []
 }
 
+freq = 10.0
+
+input_current = [0]
+
 # Run simulation
 for i in range(len(time)-1):
+
     # Calculate input current
-    curr_input = curr_amp * 1e-6 if (2 <= time[i] <= pulse_end) else 0
+    if freq is not None:
+        curr_input = curr_amp* 1e-6 * np.sin(2*np.pi*freq*time[i]*1e-3)
+    else:
+        curr_input = curr_amp * 1e-6 if (2 <= time[i] <= pulse_end) else 0
+
+    input_current.append(curr_input)
     
     # Perform single step
     Vm[:,i+1], channel_states, step_currents = fcm.step(
@@ -447,6 +457,7 @@ axe[0].plot(time, currents["I_K_slow"], label="I_K_slow")
 axe[0].plot(time, currents["I_leak"], label="I_leakage")
 axe[0].plot(time, currents["I_Ca_L"], label="I_Ca_L")
 axe[0].plot(time, currents["I_HCN"], label="I_HCN")
+axe[0].plot(time, input_current[:total_steps], label="Input current")
 axe[0].legend()
 axe[0].grid()
 axe[0].set_ylabel("Current (uA)")
