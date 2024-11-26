@@ -15,53 +15,23 @@
 #include <string>
 
 class FCM {
-private:
-    int index;
-    double V_rest = -70.0;
-    double V_thresh = -30.0;
-    double E_l = -81.4;
-    double Cm = 1.0;
-
-    double E_po = -77.0;
-    double E_Na = 50.0;
-    double E_ca = 120.0;
-    double E_HC = -40.0;
-    double E_ct = 22.6;
-    double RA = 0.1;
-    double ro_ex = 1.0;
-
-    double K_m_Na, K_h_Na, K_s_Na, K_m_Ca_T, K_h_Ca_T;
-    double K_n_K_fast, K_n_K_slow, K_c_Ca_L, K_y_HCN;
-
-    Eigen::MatrixXd Con_Mat;
-    Eigen::VectorXd surfaces;
-    int num_rows;
-
-    Eigen::MatrixXd Vm;
-    std::map<std::string, Eigen::VectorXd> channel_states;
-
-    Eigen::VectorXd gbar_l_vec, gbar_Na_vec, gbar_ca_vec;
-    Eigen::VectorXd gbar_kd_vec, gbar_k7_vec, gbar_HC_vec, gbar_ct_vec;
-
 public:
-    // Constructor
-    FCM(const std::string& model_path = "morphology_FCM.swc");
+    // Constructor with optional index parameter
+    explicit FCM(int idx = 0);
 
-    // Setter method
+    // Setter and getter methods
     void set_index(int new_index);
-
     int get_index();
-
     double get_Vm();
     double get_V_rest();
 
-    // Spike detection method
-    bool spiked();
+    // Check if neuron has spiked
+    bool spiked() const;
 
     // Simulation step method
-    std::map<std::string, double> step(double curr_input, double dt = 0.01);
+    void step(double curr_input, double dt = 0.01);
 
-    // Helper methods for channel kinetics
+    // Gating function declarations
     double alpha_n_K_fast(double v);
     double beta_n_K_fast(double v);
     double alpha_n_K_slow(double v);
@@ -79,19 +49,47 @@ public:
     double m_Ca_T_inf(double v);
     double h_Ca_T_inf(double v);
     double tau_m_Ca_T(double v);
-    std::vector<double> tau_h_Ca_T(const std::vector<double>& v);
+    double tau_h_Ca_T(double v);
     double alpha_y_HCN(double v);
     double beta_y_HCN(double v);
     double y_HCN_inf(double v);
     double tau_y_HCN(double v);
-
-    // Template method for alpha_c_Ca_L
-    template <typename T>
-    auto alpha_c_Ca_L(const T& v);
-
+    double alpha_c_Ca_L(double v);
     double beta_c_Ca_L(double v);
     double c_Ca_L_inf(double v);
     double tau_c_Ca_L(double v);
+
+private:
+    // Helper function for channel state update
+    void update_channel_state(
+        std::vector<double>& state, 
+        double K, 
+        double dt,
+        double (FCM::*inf_func)(double), 
+        double (FCM::*tau_func)(double)
+    );
+
+    // Member variables
+    int index;
+    double V_rest, V_thresh, E_l, Cm;
+    double E_po, E_Na, E_ca, E_HC, E_ct, RA, ro_ex;
+    double K_m_Na, K_h_Na, K_s_Na, K_m_Ca_T, K_h_Ca_T, K_n_K_fast, K_n_K_slow, K_c_Ca_L, K_y_HCN;
+
+    // Nested struct for channel states
+    struct ChannelStates {
+        std::vector<double> m_Na, h_Na, s_Na;
+        std::vector<double> m_Ca_T, h_Ca_T;
+        std::vector<double> n_K_fast, n_K_slow;
+        std::vector<double> c_Ca_L; 
+        std::vector<double> y_HCN;
+    } channel_states;
+
+    // Additional member variables
+    std::vector<std::vector<double>> Con_Mat;
+    std::vector<std::vector<double>> Inv_Con_Mat;
+    int num_rows;
+    std::vector<double> surfaces, Vm;
+    std::vector<double> gbar_l_vec, gbar_Na_vec, gbar_ca_vec, gbar_kd_vec, gbar_k7_vec, gbar_HC_vec, gbar_ct_vec;
 };
 
 class Synapse {
