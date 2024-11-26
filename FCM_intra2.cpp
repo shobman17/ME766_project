@@ -4,6 +4,7 @@
 #include <eigen3/Eigen/Dense>  // For Eigen matrix operations
 #include <eigen3/unsupported/Eigen/MatrixFunctions>
 #include <cmath>        // For mathematical functions (e.g., pow, sin, etc.)
+#include <numeric>
 
 class FCM {
 private:
@@ -289,13 +290,14 @@ public:
 
     // Package currents for return (convert to uA)
     std::map<std::string, double> currents;
-    currents["i_na"] = (I_Na.sum() * 1e6 * surfaces.sum());
-    currents["i_ca_t"] = (I_Ca_T.sum() * 1e6 * surfaces.sum());
-    currents["i_k_fast"] = (I_K_fast.sum() * 1e6 * surfaces.sum());
-    currents["i_k_slow"] = (I_K_slow.sum() * 1e6 * surfaces.sum());
-    currents["i_leak"] = (I_leak.sum() * 1e6 * surfaces.sum());
-    currents["i_ca_l"] = (I_Ca_L.sum() * 1e6 * surfaces.sum());
-    currents["i_hcn"] = (I_HCN.sum() * 1e6 * surfaces.sum());
+    double surfaces_sum = std::accumulate(surfaces.begin(), surfaces.end(), 0.0);
+    currents["i_na"] = (I_Na.sum() * 1e6 * surfaces_sum);
+    currents["i_ca_t"] = (I_Ca_T.sum() * 1e6 * surfaces_sum);
+    currents["i_k_fast"] = (I_K_fast.sum() * 1e6 * surfaces_sum);
+    currents["i_k_slow"] = (I_K_slow.sum() * 1e6 * surfaces_sum);
+    currents["i_leak"] = (I_leak.sum() * 1e6 * surfaces_sum);
+    currents["i_ca_l"] = (I_Ca_L.sum() * 1e6 * surfaces_sum);
+    currents["i_hcn"] = (I_HCN.sum() * 1e6 * surfaces_sum);
 
     // Update state
     Vm = vm_next;
