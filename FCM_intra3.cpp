@@ -264,15 +264,36 @@
         }
 
         // Update channel states
-        update_channel_state(m_Na, K_m_Na, dt, &m_Na_inf, &tau_m_Na);
-        update_channel_state(h_Na, K_h_Na, dt, &h_Na_inf, &tau_h_Na);
-        update_channel_state(s_Na, K_s_Na, dt, &s_Na_inf, &tau_s_Na);
-        update_channel_state(m_Ca_T, K_m_Ca_T, dt, &m_Ca_T_inf, &tau_m_Ca_T);
-        update_channel_state(h_Ca_T, K_h_Ca_T, dt, &h_Ca_T_inf, &tau_h_Ca_T);
-        update_channel_state(n_K_fast, K_n_K_fast, dt, &n_K_fast_inf, &tau_n_K_fast);
-        update_channel_state(n_K_slow, K_n_K_slow, dt, &n_K_slow_inf, &tau_n_K_slow);
-        update_channel_state(c_Ca_L, K_c_Ca_L, dt, &c_Ca_L_inf, &tau_c_Ca_L);
-        update_channel_state(y_HCN, K_y_HCN, dt, &y_HCN_inf, &tau_y_HCN);
+        #pragma omp parallel
+        {
+            #pragma omp sections
+            {
+            #pragma omp section
+            {
+                update_channel_state(m_Na, K_m_Na, dt, &m_Na_inf, &tau_m_Na);
+                update_channel_state(h_Na, K_h_Na, dt, &h_Na_inf, &tau_h_Na);
+            }
+            #pragma omp section
+            {
+                update_channel_state(s_Na, K_s_Na, dt, &s_Na_inf, &tau_s_Na);
+                update_channel_state(m_Ca_T, K_m_Ca_T, dt, &m_Ca_T_inf, &tau_m_Ca_T);
+            }
+            #pragma omp section
+            {
+                update_channel_state(h_Ca_T, K_h_Ca_T, dt, &h_Ca_T_inf, &tau_h_Ca_T);
+                update_channel_state(n_K_fast, K_n_K_fast, dt, &n_K_fast_inf, &tau_n_K_fast);
+            }
+            #pragma omp section
+            {
+                update_channel_state(n_K_slow, K_n_K_slow, dt, &n_K_slow_inf, &tau_n_K_slow);
+                update_channel_state(c_Ca_L, K_c_Ca_L, dt, &c_Ca_L_inf, &tau_c_Ca_L);
+            }
+            #pragma omp section
+            {
+                update_channel_state(y_HCN, K_y_HCN, dt, &y_HCN_inf, &tau_y_HCN);
+            }
+            }
+        }
 
         // Calculate currents and voltage changes
         std::vector<double> dV(num_rows - 1, 0.0);
