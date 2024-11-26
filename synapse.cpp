@@ -2,16 +2,10 @@
 #include <limits>   // For std::numeric_limits
 #include <string>   // For std::string
 
-class Neuron {
-public:
-    // Virtual method to check if the neuron spiked
-    virtual bool spiked() const = 0;
-};
-
 class Synapse {
 private:
-    Neuron* pre_neuron;   // Presynaptic neuron
-    Neuron* post_neuron;  // Postsynaptic neuron
+    FCM* pre_neuron;   // Presynaptic neuron
+    FCM* post_neuron;  // Postsynaptic neuron
     double weight;        // Synaptic weight
     double delay;         // Synapse relaxation delay in ms
     double tau;           // Time constant for synaptic current decay in ms
@@ -21,7 +15,7 @@ private:
 
 public:
     // Constructor to initialize the synapse
-    Synapse(Neuron* pre, Neuron* post, double weight = 0.1, double delay = 1.0, 
+    Synapse(FCM* pre, FCM* post, double weight = 0.1, double delay = 1.0, 
             double tau = 5.0, const std::string& type = "excitatory")
         : pre_neuron(pre), post_neuron(post), weight(weight), delay(delay), 
           tau(tau), syn_type(type), syn_current(0.0), 
