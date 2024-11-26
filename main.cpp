@@ -1,4 +1,4 @@
-#include "brain.h"  // Assuming you'll have a corresponding C++ network header
+#include "brain.h" 
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -23,10 +23,10 @@ int main(int argc, char* argv[]) {
     // any neuron n will be excitatory to n*2, n*3, etc if even
     // or inhibitory if odd
     for (int i = 1; i < network.num_neurons(); ++i) {
-        Neuron* neuron = network.neurons[i];
+        FCM* neuron = network.neurons[i];
         int idx = neuron->index;
         for (int j = 2*i; j < network.num_neurons(); j += i) {
-            Neuron* post = network.neurons[j];
+            FCM* post = network.neurons[j];
             if (idx % 2 == 0) {
                 network.connect(idx, post->index, idx, 1, 5, "excitatory");
             } else {

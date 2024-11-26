@@ -1,5 +1,6 @@
 #include <cmath>    // For exp and std::isinf
 #include <limits>   // For std::numeric_limits
+#include "brain.h"
 #include <string>   // For std::string
 
 class Synapse {
@@ -52,7 +53,7 @@ public:
     }
 
     std::string get_type() const {
-        return type;
+        return syn_type;
     }
 
     FCM* get_post_neuron() {

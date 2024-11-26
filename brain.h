@@ -134,6 +134,7 @@ public:
 
     // Default constructor
     Network();
+    
     int num_neurons();
     int add_neuron();
 
