@@ -50,6 +50,11 @@ public:
     // Setter method
     void set_index(int new_index);
 
+    int get_index();
+
+    double get_Vm();
+    double get_V_rest();
+
     // Spike detection method
     bool spiked();
 
@@ -134,7 +139,7 @@ public:
 
     // Default constructor
     Network();
-    
+
     int num_neurons();
     int add_neuron();
 

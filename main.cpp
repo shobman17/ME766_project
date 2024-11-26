@@ -24,13 +24,13 @@ int main(int argc, char* argv[]) {
     // or inhibitory if odd
     for (int i = 1; i < network.num_neurons(); ++i) {
         FCM* neuron = network.neurons[i];
-        int idx = neuron->index;
+        int idx = neuron->get_index();
         for (int j = 2*i; j < network.num_neurons(); j += i) {
             FCM* post = network.neurons[j];
             if (idx % 2 == 0) {
-                network.connect(idx, post->index, idx, 1, 5, "excitatory");
+                network.connect(idx, post->get_index(), idx, 1, 5, "excitatory");
             } else {
-                network.connect(idx, post->index, idx, 1, 5, "inhibitory");
+                network.connect(idx, post->get_index(), idx, 1, 5, "inhibitory");
             }
         }
     }
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
         network.num_neurons(), 
         std::vector<double>(time_arr.size(), 0.0));
     for (int i = 0; i < network.num_neurons(); ++i) {
-        Vm_array[i][0] = network.neurons[i]->V_rest;
+        Vm_array[i][0] = network.neurons[i]->get_V_rest();
     }
     
     // calculate input current
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
     std::vector<double> curr_amp(network.num_neurons(), 0.0); // Input current amplitude (uA)
     double curr_amp_max = 30.0;
     for (int i = 0; i < network.num_neurons(); ++i) {
-        curr_amp[i] = curr_amp_max * (1.0 - (static_cast<double>(network.neurons[i]->index) / network.num_neurons()));
+        curr_amp[i] = curr_amp_max * (1.0 - (static_cast<double>(network.neurons[i]->get_index()) / network.num_neurons()));
     }
     
     std::vector<std::vector<double>> external_current(
