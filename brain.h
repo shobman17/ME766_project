@@ -4,13 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include <eigen3/Eigen/Dense>
-#include <eigen3/unsupported/Eigen/MatrixFunctions>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
-#include <map>
-#include <type_traits>
+#include <algorithm>
 #include <limits>
 #include <string>
 
@@ -32,42 +26,43 @@ public:
     void step(double curr_input, double dt = 0.01);
 
     // Gating function declarations
-    double alpha_n_K_fast(double v);
-    double beta_n_K_fast(double v);
-    double alpha_n_K_slow(double v);
-    double beta_n_K_slow(double v);
-    double n_K_fast_inf(double v);
-    double tau_n_K_fast(double v);
-    double n_K_slow_inf(double v);
-    double tau_n_K_slow(double v);
-    double m_Na_inf(double v);
-    double h_Na_inf(double v);
-    double s_Na_inf(double v);
-    double tau_m_Na(double v);
-    double tau_h_Na(double v);
-    double tau_s_Na(double v);
-    double m_Ca_T_inf(double v);
-    double h_Ca_T_inf(double v);
-    double tau_m_Ca_T(double v);
-    double tau_h_Ca_T(double v);
-    double alpha_y_HCN(double v);
-    double beta_y_HCN(double v);
-    double y_HCN_inf(double v);
-    double tau_y_HCN(double v);
-    double alpha_c_Ca_L(double v);
-    double beta_c_Ca_L(double v);
-    double c_Ca_L_inf(double v);
-    double tau_c_Ca_L(double v);
+    static double alpha_n_K_fast(double v);
+    static double beta_n_K_fast(double v);
+    static double alpha_n_K_slow(double v);
+    static double beta_n_K_slow(double v);
+    static double n_K_fast_inf(double v);
+    static double tau_n_K_fast(double v);
+    static double n_K_slow_inf(double v);
+    static double tau_n_K_slow(double v);
+    static double m_Na_inf(double v);
+    static double h_Na_inf(double v);
+    static double s_Na_inf(double v);
+    static double tau_m_Na(double v);
+    static double tau_h_Na(double v);
+    static double tau_s_Na(double v);
+    static double m_Ca_T_inf(double v);
+    static double h_Ca_T_inf(double v);
+    static double tau_m_Ca_T(double v);
+    static double tau_h_Ca_T(double v);
+    static double alpha_y_HCN(double v);
+    static double beta_y_HCN(double v);
+    static double y_HCN_inf(double v);
+    static double tau_y_HCN(double v);
+    static double alpha_c_Ca_L(double v);
+    static double beta_c_Ca_L(double v);
+    static double c_Ca_L_inf(double v);
+    static double tau_c_Ca_L(double v);
 
-private:
     // Helper function for channel state update
     void update_channel_state(
         std::vector<double>& state, 
         double K, 
         double dt,
-        double (FCM::*inf_func)(double), 
-        double (FCM::*tau_func)(double)
+        double (*inf_func)(double), 
+        double (*tau_func)(double)
     );
+
+private:
 
     // Member variables
     int index;
@@ -129,6 +124,8 @@ public:
 };
 
 class Network {
+private: 
+    
 public:
     // Containers for neurons, synapses, and input currents
     std::vector<FCM*> neurons;

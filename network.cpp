@@ -3,23 +3,23 @@
 #include <cmath>
 #include "brain.h"
 
-class Network {
-public:
-    std::vector<FCM*> neurons;
-    std::vector<Synapse*> synapses;
-    std::vector<double> input_currents;
+//class Network {
+//public:
+//    std::vector<FCM*> neurons;
+//    std::vector<Synapse*> synapses;
+//    std::vector<double> input_currents;
 
-    Network() {
+    Network::Network() {
         // Constructor to initialize vectors
     }
 
-    int num_neurons() {
+    int Network::num_neurons() {
         return neurons.size();
     }
 
-    int add_neuron() {
+    int Network::add_neuron() {
 
-        FCM* neuron = new FCM();
+        FCM* neuron = new FCM(0);
         neurons.push_back(neuron);
         neuron->set_index(neurons.size() - 1); // Index for easy access to input_current array when synaptic current has to be inserted
         input_currents.push_back(0.0); // Initial input is zero
@@ -27,12 +27,12 @@ public:
         return neuron->get_index();
     }
 
-    void connect(int pre_index,
+    void Network::connect(int pre_index,
         int post_index,
-        double weight = 0.1,
-        double delay = 1.0,
-        double tau = 5.0,
-        std::string syn_type = "excitatory") {
+        double weight,
+        double delay,
+        double tau,
+        std::string type) {
 
         if (pre_index == post_index) {
             std::cout << "Select two unique neurons to connect" << std::endl;
@@ -40,12 +40,12 @@ public:
         }
         FCM* pre_neuron = neurons[pre_index];
         FCM* post_neuron = neurons[post_index];
-        Synapse* synapse = new Synapse(pre_neuron, post_neuron, weight, delay, tau, syn_type);
+        Synapse* synapse = new Synapse(pre_neuron, post_neuron, weight, delay, tau, type);
         synapses.push_back(synapse);
         std::cout << "Connected pre-neuron " << pre_index << " to post neuron " << post_index << " and type = " << synapse->get_type() << std::endl;
     }
 
-    std::vector<double> step(std::vector<double>& external_current, 
+    std::vector<double> Network::step(std::vector<double>& external_current, 
         double t, 
         double dt) {
 
@@ -69,4 +69,4 @@ public:
 
         return Vm;
     }
-};
+
