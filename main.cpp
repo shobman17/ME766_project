@@ -3,9 +3,11 @@
 #include <vector>
 #include <cmath>
 #include <chrono>
+#include <omp.h>
 
 int main(int argc, char* argv[]) {
-    int n = 48;
+    omp_set_num_threads(8);
+    int n = 1000;
     if (argc > 1) {
         n = std::stoi(argv[1]);
     }

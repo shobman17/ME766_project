@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include "brain.h"
+#include <omp.h>
 
 //class Network {
 //public:
@@ -52,6 +53,7 @@
         std::vector<double> Vm(num_neurons(), 0.0);
 
         // Update all neurons
+        #pragma omp parallel for
         for (size_t n = 0; n < neurons.size(); n++) {
             FCM* neuron = neurons[n];
             neuron->step(input_currents[n] + external_current[n], dt);
