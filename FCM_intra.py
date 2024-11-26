@@ -37,103 +37,128 @@ class FCM:
         self.K_c_Ca_L = 1.0**((31.0 - 10.0)/10.0)
         self.K_y_HCN = 1.0**((31.0 - 37.0)/10.0)
 
-        # load model data (coords and partner compartments)
-        data=np.loadtxt(model_path)
-        ID = data[:,0]
-        type_compartment=data[:,1]
-        x_cord=data[:,2]*1e-4
-        y_cord=data[:,3]*1e-4
-        z_cord=data[:,4]*1e-4
-        radius=data[:,5]*1e-4
-        partner = data[:,6]
+        # # load model data (coords and partner compartments)
+        # data=np.loadtxt(model_path)
+        # ID = data[:,0]
+        # type_compartment=data[:,1]
+        # x_cord=data[:,2]*1e-4
+        # y_cord=data[:,3]*1e-4
+        # z_cord=data[:,4]*1e-4
+        # radius=data[:,5]*1e-4
+        # partner = data[:,6]
+        # 
+        # # Calculate physical dimensions of each compartment
+        # num_rows=len(ID)
+        # Lenghts=np.zeros(num_rows)
+        # for i in range(num_rows):
+        #     if partner[i]==-1:
+        #         l=0
+        #     else:
+        #         l=np.sqrt((x_cord[int(ID[i]-1)]-x_cord[int(partner[i]-1)])**2 +\
+        #             (y_cord[int(ID[i]-1)]-y_cord[int(partner[i]-1)])**2 +\
+        #             (z_cord[int(ID[i]-1)]-z_cord[int(partner[i]-1)])**2 )
+        #     Lenghts[i]=l
+        # x_mid=np.zeros(num_rows)
+        # y_mid=np.zeros(num_rows)
+        # z_mid=np.zeros(num_rows)
+        # for i in range(num_rows):
+        #     if partner[i]==-1:
+        #         x_mid[int(ID[i]-1)]=0
+        #         y_mid[int(ID[i]-1)]=0
+        #         z_mid[int(ID[i]-1)]=0
+        #     else:
+        #         x_mid[int(ID[i]-1)]=(x_cord[int(ID[i]-1)]+x_cord[int(partner[i]-1)])/2.
+        #         y_mid[int(ID[i]-1)]=(y_cord[int(ID[i]-1)]+y_cord[int(partner[i]-1)])/2.
+        #         z_mid[int(ID[i]-1)]=(z_cord[int(ID[i]-1)]+z_cord[int(partner[i]-1)])/2.
+# 
+        # ID=ID-1
+        # partner=partner-1
+        # ID=ID[1:]
+        # radius=radius[1:]
+        # x_mid=x_mid[1:]
+        # y_mid=y_mid[1:]
+        # z_mid=z_mid[1:]
+        # type_compartment=type_compartment[1:]
+        # Lenghts=Lenghts[1:]
+        # partner=partner[1:]
+        # for i in range(len(partner)):
+        #     if partner[i]==0:
+        #         partner[i]=1
+# 
+        # # Create adjacency matrix between compartments
+        # adj_list=[]
+        # for i in range(num_rows-1):
+        #     adj_list.append([int(ID[i]),int(partner[i])])
+        # adj_list = adj_list[1:]
+        # G = nx.Graph(adj_list)
+        # adj_matrix= 1.*nx.adjacency_matrix(G)
+        # Con_Mat=adj_matrix.toarray()
+# 
+        # # Finally, update the resistance and surface areas of each compartment
+        # resistances=np.zeros(num_rows-1)
+        # for i in range(num_rows-1):
+        #     resistances[i]=0.5*(self.RA*Lenghts[i])/(np.pi*radius[i]**2)
+        # surfaces=np.zeros(num_rows-1)
+        # for i in range(num_rows-1):
+        #     surfaces[i]=2.*np.pi*radius[i]*Lenghts[i]
+
+        self.Con_Mat = np.array([[  114.70698013,    -2.38929269,  -112.31768744,    -0.        ],
+                                 [   -6.130952,       9.10152754,    -0.,            -2.97057554],
+                                 [-1912.52907736,    -0.,          1912.52907736,    -0.        ],
+                                 [   -0.,            -3.07782072,    -0.,             3.07782072]])
+        self.num_rows = 5
+        self.surfaces = np.array([3.55310988e-06, 1.38468209e-06, 2.08664584e-07, 1.33643351e-06])
+
+        # self.gbar_l_vec=np.ones(self.num_rows-1)*0.033
+        # self.gbar_Na_vec=np.zeros(self.num_rows-1)
+        # self.gbar_Na_vec[1]=110.95
+        # self.gbar_ca_vec=np.zeros(self.num_rows-1)
+        # self.gbar_ca_vec[0]=1.01
+        # self.gbar_ca_vec[3]=1.01
+        # self.gbar_kd_vec=np.zeros(self.num_rows-1)
+        # self.gbar_kd_vec[1]=0.4757
+        # self.gbar_k7_vec=np.zeros(self.num_rows-1)
+        # self.gbar_k7_vec[0]=2.44
+        # self.gbar_k7_vec[3]=2.44
+        # self.gbar_HC_vec=np.zeros(self.num_rows-1)
+        # self.gbar_HC_vec[2]=3.69
+        # self.gbar_ct_vec=np.zeros(self.num_rows-1)
+        # self.gbar_ct_vec[2]=12.49
+
+        self.gbar_l_vec = np.array([0.033, 0.033, 0.033, 0.033])
+        self.gbar_Na_vec = np.array([  0.,   110.95,   0.,     0.  ])
+        self.gbar_ca_vec = np.array([1.01, 0.,   0.,  1.01])
+        self.gbar_kd_vec = np.array([0.,     0.4757, 0.,     0.    ])
+        self.gbar_k7_vec = np.array([2.44, 0.,   0.,   2.44])
+        self.gbar_HC_vec = np.array([0.,   0.,   3.69, 0.  ])
+        self.gbar_ct_vec = np.array([ 0.,    0.,  12.49,  0.  ])
+
+        # print(self.gbar_l_vec)
+        # print(self.gbar_Na_vec)
+        # print(self.gbar_ca_vec)
+        # print(self.gbar_kd_vec)
+        # print(self.gbar_k7_vec)
+        # print(self.gbar_HC_vec)
+        # print(self.gbar_ct_vec)
+
+        # for i in range(num_rows-1):
+        #     for j in range(num_rows-1):
+        #         if Con_Mat[i][j] == 1:
+        #             Con_Mat[i][j] = 1./(resistances[i]+resistances[j])
+        # for i in range(num_rows-1):
+        #     element_ij = 0.
+        #     for j in range(num_rows-1):
+        #         if Con_Mat[i][j] != 0.:
+        #             element_ij=element_ij+Con_Mat[i][j]
+        #     Con_Mat[i][i]=-1.*(element_ij)
+        # for i in range(num_rows-1):
+        #     Con_Mat[i]=-1.*Con_Mat[i]/surfaces[i]
+
         
-        # Calculate physical dimensions of each compartment
-        num_rows=len(ID)
-        Lenghts=np.zeros(num_rows)
-        for i in range(num_rows):
-            if partner[i]==-1:
-                l=0
-            else:
-                l=np.sqrt((x_cord[int(ID[i]-1)]-x_cord[int(partner[i]-1)])**2 +\
-                    (y_cord[int(ID[i]-1)]-y_cord[int(partner[i]-1)])**2 +\
-                    (z_cord[int(ID[i]-1)]-z_cord[int(partner[i]-1)])**2 )
-            Lenghts[i]=l
-        x_mid=np.zeros(num_rows)
-        y_mid=np.zeros(num_rows)
-        z_mid=np.zeros(num_rows)
-        for i in range(num_rows):
-            if partner[i]==-1:
-                x_mid[int(ID[i]-1)]=0
-                y_mid[int(ID[i]-1)]=0
-                z_mid[int(ID[i]-1)]=0
-            else:
-                x_mid[int(ID[i]-1)]=(x_cord[int(ID[i]-1)]+x_cord[int(partner[i]-1)])/2.
-                y_mid[int(ID[i]-1)]=(y_cord[int(ID[i]-1)]+y_cord[int(partner[i]-1)])/2.
-                z_mid[int(ID[i]-1)]=(z_cord[int(ID[i]-1)]+z_cord[int(partner[i]-1)])/2.
 
-        ID=ID-1
-        partner=partner-1
-        ID=ID[1:]
-        radius=radius[1:]
-        x_mid=x_mid[1:]
-        y_mid=y_mid[1:]
-        z_mid=z_mid[1:]
-        type_compartment=type_compartment[1:]
-        Lenghts=Lenghts[1:]
-        partner=partner[1:]
-        for i in range(len(partner)):
-            if partner[i]==0:
-                partner[i]=1
-
-        # Create adjacency matrix between compartments
-        adj_list=[]
-        for i in range(num_rows-1):
-            adj_list.append([int(ID[i]),int(partner[i])])
-        adj_list = adj_list[1:]
-        G = nx.Graph(adj_list)
-        adj_matrix= 1.*nx.adjacency_matrix(G)
-        Con_Mat=adj_matrix.toarray()
-
-        # Finally, update the resistance and surface areas of each compartment
-        resistances=np.zeros(num_rows-1)
-        for i in range(num_rows-1):
-            resistances[i]=0.5*(self.RA*Lenghts[i])/(np.pi*radius[i]**2)
-        surfaces=np.zeros(num_rows-1)
-        for i in range(num_rows-1):
-            surfaces[i]=2.*np.pi*radius[i]*Lenghts[i]
-
-        self.gbar_l_vec=np.ones(num_rows-1)*0.033
-        self.gbar_Na_vec=np.zeros(num_rows-1)
-        self.gbar_Na_vec[1]=110.95
-        self.gbar_ca_vec=np.zeros(num_rows-1)
-        self.gbar_ca_vec[0]=1.01
-        self.gbar_ca_vec[3]=1.01
-        self.gbar_kd_vec=np.zeros(num_rows-1)
-        self.gbar_kd_vec[1]=0.4757
-        self.gbar_k7_vec=np.zeros(num_rows-1)
-        self.gbar_k7_vec[0]=2.44
-        self.gbar_k7_vec[3]=2.44
-        self.gbar_HC_vec=np.zeros(num_rows-1)
-        self.gbar_HC_vec[2]=3.69
-        self.gbar_ct_vec=np.zeros(num_rows-1)
-        self.gbar_ct_vec[2]=12.49
-
-        for i in range(num_rows-1):
-            for j in range(num_rows-1):
-                if Con_Mat[i][j] == 1:
-                    Con_Mat[i][j] = 1./(resistances[i]+resistances[j])
-        for i in range(num_rows-1):
-            element_ij = 0.
-            for j in range(num_rows-1):
-                if Con_Mat[i][j] != 0.:
-                    element_ij=element_ij+Con_Mat[i][j]
-            Con_Mat[i][i]=-1.*(element_ij)
-        for i in range(num_rows-1):
-            Con_Mat[i]=-1.*Con_Mat[i]/surfaces[i]
-
-        self.Con_Mat = Con_Mat
-        self.num_rows = num_rows
-        self.surfaces = surfaces
+        # print("Con mat: ", self.Con_Mat)
+        # print("Num_rows: ", self.num_rows)
+        # print("surfaces: ", self.surfaces)
 
         # Finally initialize all the membrane potentials and gating variables
         self.Vm = np.zeros([self.num_rows - 1, 1])
