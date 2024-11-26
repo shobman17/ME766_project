@@ -9,8 +9,8 @@ class Synapse:
         - pre_neuron: The presynaptic neuron (an instance of the SCM class).
         - post_neuron: The postsynaptic neuron (an instance of the SCM class).
         - weight: Synaptic weight (strength of connection).
-        - delay: Transmission delay in ms.
-        - tau: Time constant for synaptic current decay.
+        - delay: Synapse relaxation delay in ms.
+        - tau: Time constant for synaptic current decay in ms
         - syn_type: Type of synapse ('excitatory' or 'inhibitory').
         """
         self.pre_neuron = pre_neuron
@@ -24,7 +24,7 @@ class Synapse:
         self.syn_current = 0.0
         self.last_spike_time = -np.inf  # Keeps track of the last presynaptic spike
 
-    def update(self, t, dt):
+    def step(self, t, dt):
         """
         Update the synaptic current based on the presynaptic activity.
         
@@ -33,7 +33,7 @@ class Synapse:
         - dt: Time step (ms).
         """
         # Check if the presynaptic neuron has spiked
-        if self.pre_neuron.spiked and (t - self.last_spike_time > self.delay):
+        if self.pre_neuron.spiked() and (t - self.last_spike_time > self.delay):
             self.last_spike_time = t
             if self.syn_type == "excitatory":
                 self.syn_current += self.weight
@@ -50,57 +50,4 @@ class Synapse:
         return self.syn_current
 
 
-class Network:
-    def __init__(self):
-        self.neurons = []
-        self.synapses = []
-
-    def add_neuron(self, neuron):
-        self.neurons.append(neuron)
-
-    def connect(self, pre_index, post_index, weight=0.1, delay=1.0, tau=5.0, syn_type="excitatory"):
-        pre_neuron = self.neurons[pre_index]
-        post_neuron = self.neurons[post_index]
-        synapse = Synapse(pre_neuron, post_neuron, weight, delay, tau, syn_type)
-        self.synapses.append(synapse)
-
-    def run(self, sim_end, dt):
-        """
-        Simulate the network.
-        
-        Args:
-        - sim_end: Total simulation time (ms).
-        - dt: Time step (ms).
-        """
-        time = np.arange(0, sim_end, dt)
-        for t in time:
-            # Update all neurons
-            for neuron in self.neurons:
-                neuron.update(t, dt)
-            
-            # Update all synapses
-            for synapse in self.synapses:
-                synapse.update(t, dt)
-                syn_current = synapse.get_current()
-                synapse.post_neuron.external_current += syn_current
-
-
-# Example usage
-if __name__ == "__main__":
-    # Create a network
-    network = Network()
-
-    # Create neurons (using the SCM class from your existing code)
-    neuron1 = SCM()
-    neuron2 = SCM()
-
-    # Add neurons to the network
-    network.add_neuron(neuron1)
-    network.add_neuron(neuron2)
-
-    # Connect neurons with synapses
-    network.connect(0, 1, weight=0.5, delay=1.0, tau=10.0, syn_type="excitatory")
-
-    # Simulate the network
-    network.run(sim_end=100, dt=0.1)
 
