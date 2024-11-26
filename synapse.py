@@ -143,7 +143,7 @@ if __name__ == "__main__":
     axe[2].plot(time, Vm2[0][:total_steps])
     axe[2].grid()
     axe[2].set_xlabel("Time (ms)")
-    axe[2].set_ylabel("Membrane potential of neuron 1  (mV)")
+    axe[2].set_ylabel("Membrane potential of neuron 2  (mV)")
     
     plt.tight_layout()
     plt.show()
