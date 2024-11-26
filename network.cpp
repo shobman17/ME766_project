@@ -17,6 +17,7 @@ public:
     }
 
     int add_neuron() {
+
         FCM* neuron = new FCM();
         neurons.push_back(neuron);
         neuron->set_index(neurons.size() - 1); // Index for easy access to input_current array when synaptic current has to be inserted
@@ -25,7 +26,13 @@ public:
         return neuron->get_index();
     }
 
-    void connect(int pre_index, int post_index, double weight = 0.1, double delay = 1.0, double tau = 5.0, std::string syn_type = "excitatory") {
+    void connect(int pre_index,
+        int post_index,
+        double weight = 0.1,
+        double delay = 1.0,
+        double tau = 5.0,
+        std::string syn_type = "excitatory") {
+
         if (pre_index == post_index) {
             std::cout << "Select two unique neurons to connect" << std::endl;
             return;
@@ -37,14 +44,17 @@ public:
         std::cout << "Connected pre-neuron " << pre_index << " to post neuron " << post_index << " and type = " << synapse->get_type() << std::endl;
     }
 
-    std::vector<double> step(std::vector<double>& external_current, double t, double dt) {
+    std::vector<double> step(std::vector<double>& external_current, 
+        double t, 
+        double dt) {
+
         std::vector<double> Vm(num_neurons(), 0.0);
 
         // Update all neurons
         for (size_t n = 0; n < neurons.size(); n++) {
             FCM* neuron = neurons[n];
             neuron->step(input_currents[n] + external_current[n], dt);
-            Vm[neuron->get_index()] = neuron->get_Vm(0);
+            Vm[neuron->get_index()] = neuron->get_Vm();
         }
 
         // Set input currents for next step = 0

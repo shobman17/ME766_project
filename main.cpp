@@ -1,4 +1,4 @@
-#include "network.h"  // Assuming you'll have a corresponding C++ network header
+#include "brain.h"  // Assuming you'll have a corresponding C++ network header
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -48,7 +48,8 @@ int main(int argc, char* argv[]) {
     double pulse_end = 200;  // Duration of current pulse (ms)
     
     // Initialize arrays to store results
-    std::vector<std::vector<double>> Vm_array(network.num_neurons(), 
+    std::vector<std::vector<double>> Vm_array(
+        network.num_neurons(), 
         std::vector<double>(time_arr.size(), 0.0));
     for (int i = 0; i < network.num_neurons(); ++i) {
         Vm_array[i][0] = network.neurons[i]->V_rest;
@@ -62,7 +63,8 @@ int main(int argc, char* argv[]) {
         curr_amp[i] = curr_amp_max * (1.0 - (static_cast<double>(network.neurons[i]->index) / network.num_neurons()));
     }
     
-    std::vector<std::vector<double>> external_current(network.num_neurons(), 
+    std::vector<std::vector<double>> external_current(
+        network.num_neurons(), 
         std::vector<double>(time_arr.size(), 0.0));
     std::vector<double> curr_input(network.num_neurons(), 0.0);
 

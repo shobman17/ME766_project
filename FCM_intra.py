@@ -8,7 +8,7 @@ Models the retinal bipolar neuron present in the eye as a four compartment neuro
 """
 
 class FCM:
-    def __init__(self, model_path = "morphology_FCM.swc", index = 0):
+    def __init__(self, index = 0):
 
         # For use in network
         self.index = index
