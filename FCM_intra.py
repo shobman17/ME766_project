@@ -37,93 +37,12 @@ class FCM:
         self.K_c_Ca_L = 1.0**((31.0 - 10.0)/10.0)
         self.K_y_HCN = 1.0**((31.0 - 37.0)/10.0)
 
-        # # load model data (coords and partner compartments)
-        # data=np.loadtxt(model_path)
-        # ID = data[:,0]
-        # type_compartment=data[:,1]
-        # x_cord=data[:,2]*1e-4
-        # y_cord=data[:,3]*1e-4
-        # z_cord=data[:,4]*1e-4
-        # radius=data[:,5]*1e-4
-        # partner = data[:,6]
-        # 
-        # # Calculate physical dimensions of each compartment
-        # num_rows=len(ID)
-        # Lenghts=np.zeros(num_rows)
-        # for i in range(num_rows):
-        #     if partner[i]==-1:
-        #         l=0
-        #     else:
-        #         l=np.sqrt((x_cord[int(ID[i]-1)]-x_cord[int(partner[i]-1)])**2 +\
-        #             (y_cord[int(ID[i]-1)]-y_cord[int(partner[i]-1)])**2 +\
-        #             (z_cord[int(ID[i]-1)]-z_cord[int(partner[i]-1)])**2 )
-        #     Lenghts[i]=l
-        # x_mid=np.zeros(num_rows)
-        # y_mid=np.zeros(num_rows)
-        # z_mid=np.zeros(num_rows)
-        # for i in range(num_rows):
-        #     if partner[i]==-1:
-        #         x_mid[int(ID[i]-1)]=0
-        #         y_mid[int(ID[i]-1)]=0
-        #         z_mid[int(ID[i]-1)]=0
-        #     else:
-        #         x_mid[int(ID[i]-1)]=(x_cord[int(ID[i]-1)]+x_cord[int(partner[i]-1)])/2.
-        #         y_mid[int(ID[i]-1)]=(y_cord[int(ID[i]-1)]+y_cord[int(partner[i]-1)])/2.
-        #         z_mid[int(ID[i]-1)]=(z_cord[int(ID[i]-1)]+z_cord[int(partner[i]-1)])/2.
-# 
-        # ID=ID-1
-        # partner=partner-1
-        # ID=ID[1:]
-        # radius=radius[1:]
-        # x_mid=x_mid[1:]
-        # y_mid=y_mid[1:]
-        # z_mid=z_mid[1:]
-        # type_compartment=type_compartment[1:]
-        # Lenghts=Lenghts[1:]
-        # partner=partner[1:]
-        # for i in range(len(partner)):
-        #     if partner[i]==0:
-        #         partner[i]=1
-# 
-        # # Create adjacency matrix between compartments
-        # adj_list=[]
-        # for i in range(num_rows-1):
-        #     adj_list.append([int(ID[i]),int(partner[i])])
-        # adj_list = adj_list[1:]
-        # G = nx.Graph(adj_list)
-        # adj_matrix= 1.*nx.adjacency_matrix(G)
-        # Con_Mat=adj_matrix.toarray()
-# 
-        # # Finally, update the resistance and surface areas of each compartment
-        # resistances=np.zeros(num_rows-1)
-        # for i in range(num_rows-1):
-        #     resistances[i]=0.5*(self.RA*Lenghts[i])/(np.pi*radius[i]**2)
-        # surfaces=np.zeros(num_rows-1)
-        # for i in range(num_rows-1):
-        #     surfaces[i]=2.*np.pi*radius[i]*Lenghts[i]
-
         self.Con_Mat = np.array([[  114.70698013,    -2.38929269,  -112.31768744,    -0.        ],
                                  [   -6.130952,       9.10152754,    -0.,            -2.97057554],
                                  [-1912.52907736,    -0.,          1912.52907736,    -0.        ],
                                  [   -0.,            -3.07782072,    -0.,             3.07782072]])
         self.num_rows = 5
         self.surfaces = np.array([3.55310988e-06, 1.38468209e-06, 2.08664584e-07, 1.33643351e-06])
-
-        # self.gbar_l_vec=np.ones(self.num_rows-1)*0.033
-        # self.gbar_Na_vec=np.zeros(self.num_rows-1)
-        # self.gbar_Na_vec[1]=110.95
-        # self.gbar_ca_vec=np.zeros(self.num_rows-1)
-        # self.gbar_ca_vec[0]=1.01
-        # self.gbar_ca_vec[3]=1.01
-        # self.gbar_kd_vec=np.zeros(self.num_rows-1)
-        # self.gbar_kd_vec[1]=0.4757
-        # self.gbar_k7_vec=np.zeros(self.num_rows-1)
-        # self.gbar_k7_vec[0]=2.44
-        # self.gbar_k7_vec[3]=2.44
-        # self.gbar_HC_vec=np.zeros(self.num_rows-1)
-        # self.gbar_HC_vec[2]=3.69
-        # self.gbar_ct_vec=np.zeros(self.num_rows-1)
-        # self.gbar_ct_vec[2]=12.49
 
         self.gbar_l_vec = np.array([0.033, 0.033, 0.033, 0.033])
         self.gbar_Na_vec = np.array([  0.,   110.95,   0.,     0.  ])
@@ -132,33 +51,6 @@ class FCM:
         self.gbar_k7_vec = np.array([2.44, 0.,   0.,   2.44])
         self.gbar_HC_vec = np.array([0.,   0.,   3.69, 0.  ])
         self.gbar_ct_vec = np.array([ 0.,    0.,  12.49,  0.  ])
-
-        # print(self.gbar_l_vec)
-        # print(self.gbar_Na_vec)
-        # print(self.gbar_ca_vec)
-        # print(self.gbar_kd_vec)
-        # print(self.gbar_k7_vec)
-        # print(self.gbar_HC_vec)
-        # print(self.gbar_ct_vec)
-
-        # for i in range(num_rows-1):
-        #     for j in range(num_rows-1):
-        #         if Con_Mat[i][j] == 1:
-        #             Con_Mat[i][j] = 1./(resistances[i]+resistances[j])
-        # for i in range(num_rows-1):
-        #     element_ij = 0.
-        #     for j in range(num_rows-1):
-        #         if Con_Mat[i][j] != 0.:
-        #             element_ij=element_ij+Con_Mat[i][j]
-        #     Con_Mat[i][i]=-1.*(element_ij)
-        # for i in range(num_rows-1):
-        #     Con_Mat[i]=-1.*Con_Mat[i]/surfaces[i]
-
-        
-
-        # print("Con mat: ", self.Con_Mat)
-        # print("Num_rows: ", self.num_rows)
-        # print("surfaces: ", self.surfaces)
 
         # Finally initialize all the membrane potentials and gating variables
         self.Vm = np.zeros([self.num_rows - 1, 1])
@@ -352,9 +244,10 @@ class FCM:
         dV[0] = dV[0] + curr_density
         
         # Calculate next voltage state
-        II = np.identity(self.num_rows-1)
-        II_Con_Mat = II + (self.Con_Mat*dt/self.Cm)
-        Inv_Con_Mat = np.linalg.inv(II_Con_Mat)
+        Inv_Con_Mat = np.array([[9.27335478e-01, 2.03249095e-02, 5.17538740e-02, 5.85738801e-04],
+                                [5.21539472e-02, 9.18466316e-01, 2.91067136e-03, 2.64690654e-02],
+                                [8.81257362e-01, 1.93149907e-02, 9.88710132e-02, 5.56634188e-04],
+                                [1.55727486e-03, 2.74246646e-02, 8.69103028e-05, 9.70931150e-01]])
         vm_next = np.dot(Inv_Con_Mat, (vm_current + dt * dV / self.Cm))
         
         # Package channel states for return
@@ -381,8 +274,6 @@ class FCM:
             'i_hcn': np.sum(I_HCN * 1e6 * self.surfaces[:])
         }
 
-        #print(vm_next)
-
         self.Vm = vm_next.reshape((4,1))
         self.channel_states = channel_states_next
         
@@ -403,19 +294,6 @@ if __name__ == "__main__":
     # Initialize arrays to store results
     Vm = np.zeros([fcm.num_rows-1, len(time)])
     Vm[:,0] = fcm.Vm[:,0]  # Set initial voltage
-    
-    # initialize channel states
-    # channel_states = {
-    #     'm_na': np.ones(fcm.num_rows-1) * fcm.m_Na_inf(fcm.v_rest),
-    #     'h_na': np.ones(fcm.num_rows-1) * fcm.h_Na_inf(fcm.v_rest),
-    #     's_na': np.ones(fcm.num_rows-1) * fcm.s_Na_inf(fcm.v_rest),
-    #     'm_ca_t': np.ones(fcm.num_rows-1) * fcm.m_Ca_t_inf(fcm.v_rest),
-    #     'h_ca_t': np.ones(fcm.num_rows-1) * fcm.h_Ca_t_inf(fcm.v_rest),
-    #     'n_k_fast': np.ones(fcm.num_rows-1) * fcm.n_K_fast_inf(fcm.v_rest),
-    #     'n_k_slow': np.ones(fcm.num_rows-1) * fcm.n_K_slow_inf(fcm.v_rest),
-    #     'c_ca_l': np.ones(fcm.num_rows-1) * fcm.c_Ca_l_inf(fcm.v_rest),
-    #     'y_hcn': np.ones(fcm.num_rows-1) * fcm.y_HCN_inf(fcm.v_rest)
-    # }
     
     # initialize arrays for currents
     currents = {
@@ -438,14 +316,6 @@ if __name__ == "__main__":
     
         input_current.append(curr_input*1e6)
         
-        # Perform single step
-        # Vm[:,i+1], channel_states, step_currents = fcm.step(
-        #     curr_input, Vm[:,i],
-        #     channel_states['m_Na'], channel_states['h_Na'], channel_states['s_Na'],
-        #     channel_states['m_Ca_T'], channel_states['h_Ca_T'],
-        #     channel_states['n_K_fast'], channel_states['n_K_slow'],
-        #     channel_states['c_Ca_L'], channel_states['y_HCN']
-        # )
         step_currents = fcm.step(curr_input, dt = dt)
         
         # Store currents and membrane voltages
@@ -456,7 +326,6 @@ if __name__ == "__main__":
         if fcm.spiked():
             print(f"Spike at time {time[i]} ms!")
     
-    #time, Vm, I_Na, I_Ca_T, I_K_fast, I_K_slow, I_leak, I_Ca_L, I_HCN = fcm.run(20, 350, 350, 10)
     
     fig, axe = plt.subplots(2, 1, figsize=(15,10), sharex=True)
     
