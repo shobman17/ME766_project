@@ -24,7 +24,7 @@
         neurons.push_back(neuron);
         neuron->set_index(neurons.size() - 1); // Index for easy access to input_current array when synaptic current has to be inserted
         input_currents.push_back(0.0); // Initial input is zero
-        std::cout << "Added neuron " << neuron->get_index() << std::endl;
+        // std::cout << "Added neuron " << neuron->get_index() << std::endl;
         return neuron->get_index();
     }
 
@@ -43,7 +43,7 @@
         FCM* post_neuron = neurons[post_index];
         Synapse* synapse = new Synapse(pre_neuron, post_neuron, weight, delay, tau, type);
         synapses.push_back(synapse);
-        std::cout << "Connected pre-neuron " << pre_index << " to post neuron " << post_index << " and type = " << synapse->get_type() << std::endl;
+        // std::cout << "Connected pre-neuron " << pre_index << " to post neuron " << post_index << " and type = " << synapse->get_type() << std::endl;
     }
 
     std::vector<double> Network::step(std::vector<double>& external_current, 
@@ -64,6 +64,7 @@
         std::fill(input_currents.begin(), input_currents.end(), 0.0);
 
         // Update all synapses and set synaptic currents for next time step
+        #pragma omp parallel for
         for (auto& synapse : synapses) {
             synapse->step(t, dt);
             input_currents[synapse->get_post_neuron()->get_index()] += synapse->get_current() * 1e-6;

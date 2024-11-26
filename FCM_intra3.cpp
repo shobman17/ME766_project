@@ -253,6 +253,7 @@
         std::vector<double> g_l_asl(num_rows - 1);
 
         // Calculate channel conductances
+        #pragma omp parallel for 
         for (int i = 0; i < num_rows - 1; i++) {
             g_Na_asl[i] = gbar_Na_vec[i] * pow(m_Na[i], 3) * h_Na[i] * s_Na[i];
             g_ca_asl[i] = gbar_ca_vec[i] * pow(m_Ca_T[i], 2) * h_Ca_T[i];
@@ -297,6 +298,7 @@
 
         // Calculate currents and voltage changes
         std::vector<double> dV(num_rows - 1, 0.0);
+        //#pragma omp parallel for 
         for (int i = 0; i < num_rows - 1; i++) {
             double I_Na = g_Na_asl[i] * (Vm[i] - E_Na);
             double I_Ca_T = g_ca_asl[i] * (Vm[i] - E_ca);
@@ -313,9 +315,10 @@
 
         // Update membrane potentials manually without matrix multiplication
         std::vector<double> vm_next(num_rows - 1, 0.0);
+        //#pragma omp parallel for
         for (int i = 0; i < num_rows - 1; i++) {
             for (int j = 0; j < num_rows - 1; j++) {
-                vm_next[i] += Con_Mat[i][j] * (Vm[j] + dt * dV[j] / Cm);
+                vm_next[i] += Inv_Con_Mat[i][j] * (Vm[j] + dt * dV[j] / Cm);
             }
         }
         Vm = vm_next;
