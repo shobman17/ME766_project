@@ -116,7 +116,7 @@ if __name__ == "__main__":
         Vm1[:,i+1] = neuron1.Vm[:,0]
         Vm2[:,i+1] = neuron2.Vm[:,0]
         
-    fig, axe = plt.subplots(3, 1, figsize=(15,10), sharex=True)
+    fig, axe = plt.subplots(3, 1, figsize=(10,10), sharex=True, constrained_layout = True)
     
     total_steps = int(T/dt)
     time = time[:total_steps]
@@ -138,14 +138,14 @@ if __name__ == "__main__":
     axe[1].plot(time, Vm1[0][:total_steps])
     axe[1].grid()
     axe[1].set_xlabel("Time (ms)")
-    axe[1].set_ylabel("Membrane potential of neuron 1  (mV)")
+    axe[1].set_ylabel("Pre neuron potential (mV)")
 
     axe[2].plot(time, Vm2[0][:total_steps])
     axe[2].grid()
     axe[2].set_xlabel("Time (ms)")
-    axe[2].set_ylabel("Membrane potential of neuron 2  (mV)")
+    axe[2].set_ylabel(" Post neuron potential (mV)")
     
-    plt.tight_layout()
+    # plt.tight_layout()
     plt.show()
 
 

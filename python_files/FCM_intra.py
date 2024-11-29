@@ -327,7 +327,7 @@ if __name__ == "__main__":
             print(f"Spike at time {time[i]} ms!")
     
     
-    fig, axe = plt.subplots(2, 1, figsize=(15,10), sharex=True)
+    fig, axe = plt.subplots(2, 1, figsize=(10,10), sharex=True, constrained_layout = True)
     
     total_steps = int(T/dt)
     time = time[:total_steps]
@@ -349,7 +349,7 @@ if __name__ == "__main__":
     axe[1].set_xlabel("Time (ms)")
     axe[1].set_ylabel("Membrane potential (mV)")
     
-    plt.tight_layout()
+    # plt.tight_layout()
     plt.show()
 
 
